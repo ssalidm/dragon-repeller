@@ -38,6 +38,12 @@ const locations = [
         buttonFunctions: [buyHealth, buyWeapon, goTown],
         text: "You enter the store."
     },
+    {
+        name: "cave",
+        buttonText: ["Fight slime", "Fight fanged beast", "Go to town square"],
+        buttonFunctions: [fightSlime, fightBeast, goTown],
+        text: "You enter the cave. You see some monsters."
+    },
 ];
 
 // Initialize buttons
@@ -67,7 +73,7 @@ function update( location ) {
  * Navigates the player to the town square location.
  */
 function goTown() {
-    update(locations[0])
+    update( locations[0] )
 }
 
 
@@ -75,26 +81,46 @@ function goTown() {
  * Navigates the player to the store location.
  */
 function goToStore() {
-    update(locations[1])
+    update( locations[1] )
 }
 
 
+/**
+ * Navigates the player to the cave location.
+ */
 function goToCave() {
-    console.log("Go to Cave")
+    update(locations[2])
 }
 
 
 function fightDragon() {
-    console.log("Fight Dragon")    
+    console.log( "Fight Dragon" )    
+}
+
+
+function fightSlime() {
+    console.log( "Fight Slime" )    
+}
+
+
+function fightBeast() {
+    console.log( "Fight Beast" )    
 }
 
 
 function buyHealth() {
-    console.log("Buy Health")
+    if ( gold >= 10 ) {
+    gold -= 10;
+    health += 10
+    goldText.innerText = gold
+    healthText.innerText = health
+    } else {
+        text.innerText = "You do not have enough gold to buy health.";
+    }
 }
 
 
 function buyWeapon() {
-    console.log("Buy Weapon")
+    console.log( "Buy Weapon" )
 }
 
