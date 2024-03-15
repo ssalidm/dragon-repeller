@@ -6,16 +6,16 @@ let fighting;
 let monsterHealth;
 let inventory = ["stick"];
 
-const button1 = document.getElementById("button1")
-const button2 = document.getElementById("button2")
-const button3 = document.getElementById("button3")
-const text = document.getElementById("text")
-const xpText = document.getElementById("xpText")
-const healthText = document.getElementById("healthText")
-const goldText = document.getElementById("goldText")
-const monsterStats = document.getElementById("monsterStats")
-const monsterNameText = document.getElementById("monsterName")
-const monsterHealthText = document.getElementById("monsterHealth")
+const button1 = document.getElementById("button1");
+const button2 = document.getElementById("button2");
+const button3 = document.getElementById("button3");
+const text = document.getElementById("text");
+const xpText = document.getElementById("xpText");
+const healthText = document.getElementById("healthText");
+const goldText = document.getElementById("goldText");
+const monsterStats = document.getElementById("monsterStats");
+const monsterNameText = document.getElementById("monsterName");
+const monsterHealthText = document.getElementById("monsterHealth");
 
 /**
  * An array storing data about different locations in the game.
@@ -73,7 +73,7 @@ function update( location ) {
  * Navigates the player to the town square location.
  */
 function goTown() {
-    update( locations[0] )
+    update( locations[0] );
 }
 
 
@@ -81,7 +81,7 @@ function goTown() {
  * Navigates the player to the store location.
  */
 function goToStore() {
-    update( locations[1] )
+    update( locations[1] );
 }
 
 
@@ -89,31 +89,31 @@ function goToStore() {
  * Navigates the player to the cave location.
  */
 function goToCave() {
-    update(locations[2])
+    update(locations[2]);
 }
 
 
 function fightDragon() {
-    console.log( "Fight Dragon" )    
+    console.log( "Fight Dragon" );   
 }
 
 
 function fightSlime() {
-    console.log( "Fight Slime" )    
+    console.log( "Fight Slime" );   
 }
 
 
 function fightBeast() {
-    console.log( "Fight Beast" )    
+    console.log( "Fight Beast" );
 }
 
 
 function buyHealth() {
     if ( gold >= 10 ) {
     gold -= 10;
-    health += 10
-    goldText.innerText = gold
-    healthText.innerText = health
+    health += 10;
+    goldText.innerText = gold;
+    healthText.innerText = health;
     } else {
         text.innerText = "You do not have enough gold to buy health.";
     }
@@ -121,6 +121,6 @@ function buyHealth() {
 
 
 function buyWeapon() {
-    console.log( "Buy Weapon" )
+    console.log( "Buy Weapon" );
 }
 
