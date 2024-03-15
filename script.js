@@ -17,6 +17,32 @@ const monsterStats = document.getElementById("monsterStats");
 const monsterNameText = document.getElementById("monsterName");
 const monsterHealthText = document.getElementById("monsterHealth");
 
+xpText.innerText = xp;
+healthText.innerText = health;
+goldText.innerText = gold;
+
+const weapons = [
+    {
+        name: "stick",
+        power: 5
+    },
+    {
+        name: "dagger",
+        power: 30
+    },
+    {
+        name: "claw hammer",
+        power: 50
+    },
+    {
+        name: "sword",
+        power: 100
+    }
+];
+
+let maxWeaponsAllowed = weapons.length; // Maximum number of weapons allowed
+let NumOfcurrentWeapons = 1; // The number of current weapons in the inventory
+
 /**
  * An array storing data about different locations in the game.
  * Each element represents a location with these properties:
@@ -121,6 +147,30 @@ function buyHealth() {
 
 
 function buyWeapon() {
-    console.log( "Buy Weapon" );
+    if ( (gold >= 30) ) {
+
+        if ( NumOfcurrentWeapons >= maxWeaponsAllowed ) {
+            text.innerText = "You already have the most powerful weapon.";
+            button2.innerText = "Sell weapon (15 gold)";
+            button2.onclick = sellWeapon;
+            return;
+        }
+
+        gold -= 30;
+        currentWeapon++;
+        goldText.innerText = gold;
+        let newWeapon = weapons[currentWeapon].name;
+        text.innerText = "You now have a " + newWeapon +  ".";
+        inventory.push(newWeapon);
+        text.innerText += "\nYour Inventory: [" + inventory + "]";
+        NumOfcurrentWeapons++;
+    } else {
+        text.innerText = "You do not have enough gold to buy weapons.";
+    }
+}
+
+
+function sellWeapon() {
+    console.log("Selling Weapon for 15 gold.")
 }
 
