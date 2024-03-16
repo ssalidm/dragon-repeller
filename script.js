@@ -1,6 +1,6 @@
 let xp = 0;
 let health = 100;
-let gold = 50;
+let gold = 150;
 let currentWeapon = 0;
 let fighting;
 let monsterHealth;
@@ -21,6 +21,12 @@ xpText.innerText = xp;
 healthText.innerText = health;
 goldText.innerText = gold;
 
+/**
+ * An array containing weapon objects used in the game.
+ * Each element represents a weapon with the following properties:
+ *    * name: The name of the weapon (string).
+ *    * power: The damage potential of the weapon (number).
+ */
 const weapons = [
     {
         name: "stick",
@@ -41,7 +47,7 @@ const weapons = [
 ];
 
 let maxWeaponsAllowed = weapons.length; // Maximum number of weapons allowed
-let NumOfcurrentWeapons = 1; // The number of current weapons in the inventory
+let numOfcurrentWeapons = 1; // The number of current weapons in the inventory
 
 /**
  * An array storing data about different locations in the game.
@@ -54,19 +60,19 @@ let NumOfcurrentWeapons = 1; // The number of current weapons in the inventory
 const locations = [
     {
         name: "town square",
-        buttonText: ["Go to store", "Go to cave", "Fight dragon"],
+        buttonText: ["🛒 Go to store", "🗻 Go to cave", "🐉 Fight dragon"],
         buttonFunctions: [goToStore, goToCave, fightDragon],
         text: "You are in town square. You see a sign that says \"Store.\""
     },
     {
         name: "store",
-        buttonText: ["Buy 10 health (10 gold)", "Buy weapon (30 gold)", "Go to town square"],
+        buttonText: ["Buy 10x❤️ (10x🪙)", "Buy weapon (30x🪙)", "🏙️ Go to town square"],
         buttonFunctions: [buyHealth, buyWeapon, goTown],
         text: "You enter the store."
     },
     {
         name: "cave",
-        buttonText: ["Fight slime", "Fight fanged beast", "Go to town square"],
+        buttonText: ["Fight slime", "Fight fanged beast", "🏙️ Go to town square"],
         buttonFunctions: [fightSlime, fightBeast, goTown],
         text: "You enter the cave. You see some monsters."
     },
@@ -134,6 +140,9 @@ function fightBeast() {
 }
 
 
+/**
+ * Allows the player to purchase health if they have enough gold.
+ */
 function buyHealth() {
     if ( gold >= 10 ) {
     gold -= 10;
@@ -141,17 +150,20 @@ function buyHealth() {
     goldText.innerText = gold;
     healthText.innerText = health;
     } else {
-        text.innerText = "You do not have enough gold to buy health.";
+        text.innerText = "You do not have enough gold 🪙 to buy health.";
     }
 }
 
-
+/**
+ * Allows the player to buy weapons if they have enough gold and haven't reached
+ * the maximum weapon limit. Also provides the option to sell weapons.
+ */
 function buyWeapon() {
     if ( (gold >= 30) ) {
 
-        if ( NumOfcurrentWeapons >= maxWeaponsAllowed ) {
+        if ( numOfcurrentWeapons >= maxWeaponsAllowed ) {
             text.innerText = "You already have the most powerful weapon.";
-            button2.innerText = "Sell weapon (15 gold)";
+            button2.innerText = "Sell weapon (15x🪙)";
             button2.onclick = sellWeapon;
             return;
         }
@@ -163,14 +175,24 @@ function buyWeapon() {
         text.innerText = "You now have a " + newWeapon +  ".";
         inventory.push(newWeapon);
         text.innerText += "\nYour Inventory: [" + inventory + "]";
-        NumOfcurrentWeapons++;
+        numOfcurrentWeapons++;
     } else {
-        text.innerText = "You do not have enough gold to buy weapons.";
+        text.innerText = "You do not have enough gold 🪙 to buy weapons.";
     }
 }
 
 
 function sellWeapon() {
-    console.log("Selling Weapon for 15 gold.")
+    if ( numOfcurrentWeapons > 1 ) {
+        gold += 15;
+        goldText.innerText = gold;
+        let currentWeapon = inventory.shift();
+        text.innerText = "You sold a " + currentWeapon + ".";
+        text.innerText += "\nYour Inventory: [" + inventory + "]";
+        numOfcurrentWeapons--;
+    } else {
+        text.innerText = "You can't sell your only weapon!"
+        text.innerText += "\nYour Inventory: [" + inventory + "]";
+    }
 }
 
