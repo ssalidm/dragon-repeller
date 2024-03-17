@@ -1,6 +1,6 @@
 let xp = 0;
-let health = 30;
-let gold = 150;
+let health = 100;
+let gold = 50;
 let currentWeapon = 0;
 let fighting;
 let monsterHealth;
@@ -17,9 +17,12 @@ const monsterStats = document.getElementById("monsterStats");
 const monsterNameText = document.getElementById("monsterName");
 const monsterHealthText = document.getElementById("monsterHealth");
 
+
+initializeGameAttributes()
 xpText.innerText = xp;
 healthText.innerText = health;
 goldText.innerText = gold;
+
 
 /**
  * An array containing weapon objects used in the game.
@@ -111,7 +114,7 @@ const locations = [
     {
         name: "kill monster",
         buttonText: ["🏙️ Go to town square", "🏙️ Go to town square", "🏙️ Go to town square"],
-        buttonFunctions: [goTown, goTown, goTown],
+        buttonFunctions: [easterEgg, goTown, goTown],
         text: "The 👹monster screams \"Arg!!\" as it dies. You gain experience points and find 🪙 gold."
     },
     {
@@ -120,12 +123,41 @@ const locations = [
         buttonFunctions: [restart, restart, restart],
         text: "You die. ☠️"
     },
+    {
+        name: "win",
+        buttonText: ["REPLAY?", "REPLAY?", "REPLAY?"],
+        buttonFunctions: [restart, restart, restart],
+        text: "You defeat the dragon! YOU WIN THE GAME! 🎆"
+    },
+    {
+        name: "easter egg",
+        buttonText: ["2", "8", "🏙️ Go to town square"],
+        buttonFunctions: [pickTwo, pickEight, goTown],
+        text: "You find a secret game. Pick a number above. Ten numbers will be randomly selected between 0 and 10. If the number you choose matches one of the random numbers, you win!"
+    },
 ];
 
 // Initialize buttons
 button1.onclick = goToStore;
 button2.onclick = goToCave;
 button3.onclick = fightDragon;
+
+
+/**
+ * Initializes the game attributes such as experience points, health, gold,
+ * current weapon, and inventory.
+ * Sets the initial values for experience points (xp), health, gold,
+ * currentWeapon, and inventory.
+ * @returns {void}
+ */
+function initializeGameAttributes() {
+    xp = 0;
+    health = 100;
+    gold = 50;
+    currentWeapon = 0;
+    inventory = ["stick"];
+}
+
 
 /**
  * Updates the UI elements with location information.
@@ -231,9 +263,14 @@ function goFight() {
 function attack() {
     text.innerText = "The " + monsters[fighting].name + " attacks!";
     text.innerText += "\n You attack it with your " + weapons[currentWeapon].name + ".";
-    health -= monsters[fighting].level;
+
+    if (isMonsterHit()) {
+        health -= getMonsterAttackValue(monsters[fighting].level);
+    } else {
+        text.innerText = "You miss.";
+    }
     monsterHealth -= weapons[currentWeapon].power + Math.floor(Math.random() * xp) + 1;
-    
+
     if (monsterHealth < 0) {
         monsterHealth = 0;
     } else if (health < 0) {
@@ -242,11 +279,57 @@ function attack() {
     healthText.innerText = health;
     monsterHealthText.innerText = monsterHealth;
 
-    if (health == 0) {
+    if (health === 0) {
         lose();
-    } else if (monsterHealth == 0) {
-        defeatMonster();
+    } else if (monsterHealth === 0) {
+        fighting === 2 ? winGame() : defeatMonster();
     }
+
+    if (weaponBreaks()) {
+        let weapon = inventory.pop();
+        text.innerText += "Your " + weapon + " breaks.";
+        currentWeapon--;
+        numOfcurrentWeapons--;
+        text.innerText += "\nYou're now holding a " + weapons[currentWeapon].name + ".";
+    }
+}
+
+
+/**
+ * Calculates the attack value of a monster based on its level.
+ * The attack value is determined by multiplying the level of the monster by 5
+ * and then subtracting a random value between 0 and the player's experience points (xp).
+ * @param {number} level - The level of the monster.
+ * @returns {number} - The calculated attack value of the monster.
+ */
+function getMonsterAttackValue(level) {
+    return (level * 5) - (Math.floor(Math.random() * xp));
+}
+
+
+/**
+ * Determines whether the monster is hit during an attack.
+ * Generates a random number between 0 and 1 and checks if it's greater than 0.2.
+ * Returns true if the generated number is greater than 0.2, indicating the monster is hit.
+ * Or if the player's health is less than 20.
+ * @returns {boolean} - True if the monster is hit, false otherwise.
+ */
+function isMonsterHit() {
+    return (Math.random() > 0.2) || (health < 20);
+}
+
+
+/**
+ * Determines whether the player's weapon breaks.
+ * Generates a random number between 0 and 1 and checks if it's less than 0.1,
+ * indicating a 10% chance of the weapon breaking. Also checks if the player
+ * has more than one weapon remaining in their inventory.
+ * @returns {boolean} - True if the weapon breaks and the player has more than
+ * one weapon, false otherwise.
+ */
+function weaponBreaks() {
+    console.log(numOfcurrentWeapons)
+    return (Math.random() < 0.9) && (numOfcurrentWeapons > 1);
 }
 
 
@@ -285,31 +368,26 @@ function lose() {
 
 
 /**
- * Restarts the game by resetting player's progress and returning to town.
- * Calls the reset function to reset player's stats and inventory,
- * then calls the goTown function to return to the town.
- * @returns {void}
+ * Player wins the game after defeating the dragon.
  */
-function restart() {
-    reset();
-    goTown();
+function winGame() {
+    update(locations[6]);
 }
 
 
 /**
- * Resets player's stats and inventory.
- * Sets experience points (xp) to 0, health to 100, currentWeapon to 0,
- * inventory to contain only "stick", updates displayed gold, health, and xp.
+ * Restarts the game by resetting player's progress and returning to town.
+ * Calls the initializeGameAttributes() function to reset player's stats and inventory,
+ * updates the UI display,
+ * then calls the goTown function to return to the town.
  * @returns {void}
  */
-function reset() {
-    xp = 0;
-    health = 100;
-    currentWeapon = 0;
-    inventory = ["stick"];
-    goldText.innerText = gold;
-    healthText.innerText = health;
+function restart() {
+    initializeGameAttributes();
     xpText.innerText = xp;
+    healthText.innerText = health;
+    goldText.innerText = gold;
+    goTown();
 }
 
 
@@ -376,5 +454,77 @@ function sellWeapon() {
     } else {
         text.innerText = "You can't sell your only weapon!"
         text.innerText += "\nYour Inventory: [" + inventory + "]";
+    }
+}
+
+
+/**
+ * Activates an Easter egg event in the game.
+ * Updates the game location to the specified location at index 7 in the 'locations' array.
+ * Hides the monster stats and displays two additional buttons.
+ * @returns {void}
+ */
+function easterEgg() {
+    update(locations[7]);
+    monsterStats.style.display = "none";
+    button2.style.display = "inline-block";
+    button3.style.display = "inline-block";
+}
+
+
+/**
+ * Initiates a guess for the Easter egg event, picking the number 2.
+ * Calls the 'pick' function with the guess value 2.
+ * @returns {void}
+ */
+function pickTwo() {
+    pick(2);
+}
+
+
+/**
+ * Initiates a guess for the Easter egg event, picking the number 8.
+ * Calls the 'pick' function with the guess value 8.
+ * @returns {void}
+ */
+function pickEight() {
+    pick(8);
+}
+
+
+/**
+ * Initiates a guess for the Easter egg event, picking a specified number.
+ * Generates an array of random numbers and displays them along with the player's guess.
+ * Determines whether the player wins or loses based on the guess.
+ * @param {number} guess - The player's guess for the Easter egg event.
+ * @returns {void}
+ */
+function pick(guess) {
+    let numbers = [];
+    while (numbers.length < 10) {
+        numbers.push(Math.ceil(Math.random() * 10));
+    }
+
+    text.innerText = "You picked [" + guess + "]. Here are the random numbers:\n";
+    for (let i = 0; i < numbers.length; i++) {
+        const num = numbers[i];
+        text.innerText += num + "\n";
+    }
+
+    if (numbers.indexOf(guess) !== -1) {
+        let extraGold = 20;
+        text.innerText += "Congratulations! You win! [" + extraGold + " x 🪙]";
+        gold += extraGold;
+        goldText.innerText = gold;
+    } else {
+        let healthLost = 10;
+        text.innerText += "Oops! You lose [-" + healthLost + " x ❤️]"
+        health -= healthLost;
+    
+        if (health <= 0) {
+            health = 0;
+            lose();
+        } 
+        healthText.innerText = health;
     }
 }
